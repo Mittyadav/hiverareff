@@ -227,8 +227,10 @@ if __name__ == "__main__":
             else:
                 print(f"{Fore.RED}[ Power ]: Power is low{Style.RESET_ALL}")
             
-            time.sleep(5)
+             # Call the function to print details in the chamber-style layout
+            print_chamber(username, referral_status, rank, earned, power_status, miner_status)
 
+            time.sleep(5)
             if use_proxy and len(proxies) > 1:
                 proxy_index += 1
 
