@@ -249,7 +249,7 @@ def animated_loading(duration):
  
 
 def print_welcome_message():
-    print(Fore.WHITE + r"""
+    print("""
   -================= ≫ ──── ≪•◦ ❈ ◦•≫ ──── ≪=================-
  │                                                          │
  │  ██████╗  █████╗ ██████╗ ██╗  ██╗                        │
