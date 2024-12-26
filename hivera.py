@@ -189,23 +189,46 @@ if __name__ == "__main__":
 
     proxy_index = 0
     while True:
+ 
         for auth_entry in auth_data_list:
             parsed_auth = auth_entry['parsed']
             raw_auth = auth_entry['raw']
             username = parsed_auth.get('user', {}).get('username', 'No Username')
-
-            proxy = proxies[proxy_index % len(proxies)] if use_proxy and proxies else None
-            referral_status = "Applied" if get_activity(raw_auth, proxy) else "Failed to Apply"
+            print(f"\n{Fore.CYAN}[ Username ] : {username}{Style.RESET_ALL}")
+            
+            proxy = None
+            if use_proxy and proxies:
+                proxy = proxies[proxy_index % len(proxies)]
+                print(f"{Fore.YELLOW}[ Proxy ] : {proxy}{Style.RESET_ALL}")
+            elif use_proxy:
+                print(f"{Fore.YELLOW}[ Proxy ] : No proxies.{Style.RESET_ALL}")
+            
+            response_activity = get_activity(raw_auth, proxy)
+            if response_activity:
+                print(f"{Fore.GREEN}[ Referral ] : Applied{Style.RESET_ALL}")
+            else:
+                print(f"{Fore.RED}[ Referral ] : Failed to Apply referral{Style.RESET_ALL}")
+            # Fetch and print rank and earned before checking power
             rank, earned = get_metrics(raw_auth, proxy)
+            print(f"{Fore.BLUE+Style.BRIGHT}[ Rank ] : {rank}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN+Style.BRIGHT}[ Balance ] : {earned}{Style.RESET_ALL}")
             power_ok, current_power, power_capacity = check_power(raw_auth, proxy)
-
-            power_status = f"{current_power}/{power_capacity}" if power_ok else "Low Power"
-            miner_status = "Mining Skipped" if not power_ok or current_power < 1000 else "Mining Successful!"
-
-            # Call the function to print details in the chamber-style layout
-            print_chamber(username, referral_status, rank, earned, power_status, miner_status)
-
+            if power_ok:
+                print(f"{Fore.GREEN}[ Power ] : {current_power}/{power_capacity}{Style.RESET_ALL}")
+                if current_power >= 1000:
+                    success, response = post_request(raw_auth, proxy)
+                    if success:
+                        hivera_balance = response.get('result', {}).get('profile', {}).get('HIVERA', 0)
+                        print(f"{Fore.GREEN}[ Miner ] : Mining successful! Balance: {hivera_balance}{Style.RESET_ALL}")
+                    else:
+                        print(f"{Fore.RED}[ Miner ] : Request failed. Response: {response}{Style.RESET_ALL}")
+                else:
+                    print(f"{Fore.YELLOW}[ Miner ] : Skipping. Power is low{Style.RESET_ALL}")
+            else:
+                print(f"{Fore.RED}[ Power ]: Power is low{Style.RESET_ALL}")
+            
             time.sleep(5)
+
             if use_proxy and len(proxies) > 1:
                 proxy_index += 1
 
