@@ -243,15 +243,14 @@ def animated_loading(duration):
     while time.time() < end_time:
         remaining_time = int(end_time - time.time())
         for frame in frames:
-            print(f"\rMenunggu waktu claim berikutnya {frame} - Tersisa {remaining_time} detik         ", end="", flush=True)
+            print(f"\rWaiting for the next claim time {frame} - Remaining {remaining_time} second         ", end="", flush=True)
             time.sleep(0.25)
-    print("\rMenunggu waktu claim berikutnya selesai.                            ", flush=True)
+    print("\rWaiting for the next claim to be completed.                            ", flush=True)
  
 
 def print_welcome_message():
     print(Fore.WHITE + r"""
-          
-q -================= ≫ ──── ≪•◦ ❈ ◦•≫ ──── ≪=================-
+  -================= ≫ ──── ≪•◦ ❈ ◦•≫ ──── ≪=================-
  │                                                          │
  │  ██████╗  █████╗ ██████╗ ██╗  ██╗                        │
  │  ██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝                        │
