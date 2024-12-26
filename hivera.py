@@ -164,6 +164,16 @@ def print_welcome_message():
     """)
     print(Fore.YELLOW + "Join Telegram Channel: https://t.me/scripthub00")
 
+def print_chamber(username, referral_status, rank, earned, power_status, miner_status):
+    print(f"{Fore.MAGENTA}────────────────────────────────────────────────────────────────────{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Username: {Fore.CYAN}{username}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Referral Status: {Fore.GREEN if referral_status == 'Applied' else Fore.RED}{referral_status}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Rank: {Fore.CYAN}{rank}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Balance: {Fore.CYAN}{earned}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Power: {Fore.GREEN if power_status == 'Good' else Fore.RED}{power_status}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Miner Status: {Fore.YELLOW}{miner_status}{Style.RESET_ALL}")
+    print(f"{Fore.MAGENTA}────────────────────────────────────────────────────────────────────{Style.RESET_ALL}")
+
 if __name__ == "__main__":
     print_welcome_message()
     if not auth_data_list:
@@ -185,12 +195,8 @@ if __name__ == "__main__":
             power_status = f"{current_power}/{power_capacity}" if power_ok else "Low Power"
             miner_status = "Mining Skipped" if not power_ok or current_power < 1000 else "Mining Successful!"
 
-            print(f"\n[ Username ] : {Fore.GREEN + username}")
-            print(f"[ Referral ] : {Fore.GREEN if referral_status == 'Applied' else Fore.RED}{referral_status}")
-            print(f"[ Rank ]     : {Fore.CYAN + rank}")
-            print(f"[ Balance ]  : {Fore.CYAN + earned}")
-            print(f"[ Power ]    : {Fore.GREEN if power_ok else Fore.RED}{power_status}")
-            print(f"[ Miner ]    : {Fore.YELLOW + miner_status}")
+            # Call the function to print details in the chamber-style layout
+            print_chamber(username, referral_status, rank, earned, power_status, miner_status)
 
             time.sleep(5)
             if use_proxy and len(proxies) > 1:
