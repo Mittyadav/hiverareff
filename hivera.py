@@ -264,7 +264,9 @@ def print_welcome_message():
           """)
     print(Fore.GREEN + Style.BRIGHT + "Hivera Miner")
     print(Fore.YELLOW + Style.BRIGHT + "Join Telegram Channel: https://t.me/scripthub00")
+
 if __name__ == "__main__":
+    print_welcome_message()  # Banner must be printed first
     if not auth_data_list:
         print(f"{Fore.RED} Auth data is empty.{Style.RESET_ALL}")
         sys.exit(1)
