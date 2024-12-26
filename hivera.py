@@ -273,46 +273,74 @@ if __name__ == "__main__":
     proxy_index = 0
     while True:
  
-        for auth_entry in auth_data_list:
-            parsed_auth = auth_entry['parsed']
-            raw_auth = auth_entry['raw']
-            username = parsed_auth.get('user', {}).get('username', 'No Username')
-            print(f"\n{Fore.CYAN}[ Username ] : {username}{Style.RESET_ALL}")
-            
-            proxy = None
-            if use_proxy and proxies:
-                proxy = proxies[proxy_index % len(proxies)]
-                print(f"{Fore.YELLOW}[ Proxy ] : {proxy}{Style.RESET_ALL}")
-            elif use_proxy:
-                print(f"{Fore.YELLOW}[ Proxy ] : No proxies.{Style.RESET_ALL}")
-            
-            response_activity = get_activity(raw_auth, proxy)
-            if response_activity:
-                print(f"{Fore.GREEN}[ Referral ] : Applied{Style.RESET_ALL}")
-            else:
-                print(f"{Fore.RED}[ Referral ] : Failed to Apply referral{Style.RESET_ALL}")
-            # Fetch and print rank and earned before checking power
-            rank, earned = get_metrics(raw_auth, proxy)
-            print(f"{Fore.BLUE+Style.BRIGHT}[ Rank ] : {rank}{Style.RESET_ALL}")
-            print(f"{Fore.GREEN+Style.BRIGHT}[ Balance ] : {earned}{Style.RESET_ALL}")
-            power_ok, current_power, power_capacity = check_power(raw_auth, proxy)
-            if power_ok:
-                print(f"{Fore.GREEN}[ Power ] : {current_power}/{power_capacity}{Style.RESET_ALL}")
-                if current_power >= 1000:
-                    success, response = post_request(raw_auth, proxy)
-                    if success:
-                        hivera_balance = response.get('result', {}).get('profile', {}).get('HIVERA', 0)
-                        print(f"{Fore.GREEN}[ Miner ] : Mining successful! Balance: {hivera_balance}{Style.RESET_ALL}")
-                    else:
-                        print(f"{Fore.RED}[ Miner ] : Request failed. Response: {response}{Style.RESET_ALL}")
-                else:
-                    print(f"{Fore.YELLOW}[ Miner ] : Skipping. Power is low{Style.RESET_ALL}")
-            else:
-                print(f"{Fore.RED}[ Power ]: Power is low{Style.RESET_ALL}")
-            
-            time.sleep(5)
+        from colorama import Fore, Style, init
 
-            if use_proxy and len(proxies) > 1:
-                proxy_index += 1
+init(autoreset=True)
 
-        animated_loading(60)
+def display_chamber(username, referral_status, rank, balance, power_status, miner_status):
+    """Displays a modernized chamber for the provided details."""
+    border_color = Fore.MAGENTA + Style.BRIGHT
+    text_color = Fore.CYAN
+    success_color = Fore.GREEN
+    warning_color = Fore.YELLOW
+    error_color = Fore.RED
+
+    # Print the styled chamber
+    print(border_color + "┌" + "─" * 48 + "┐")
+    print(border_color + "│" + f"{text_color} Username   : {Fore.WHITE}{username:<36}" + border_color + "│")
+    print(border_color + "│" + f"{text_color} Referral   : {success_color if referral_status == 'Applied' else error_color}{referral_status:<36}" + border_color + "│")
+    print(border_color + "│" + f"{text_color} Rank       : {Fore.BLUE}{rank:<36}" + border_color + "│")
+    print(border_color + "│" + f"{text_color} Balance    : {success_color}{balance:<36}" + border_color + "│")
+    print(border_color + "│" + f"{text_color} Power      : {success_color if power_status else error_color}{'OK' if power_status else 'Low':<36}" + border_color + "│")
+    print(border_color + "│" + f"{text_color} Miner      : {success_color if miner_status == 'Success' else warning_color}{miner_status:<36}" + border_color + "│")
+    print(border_color + "└" + "─" * 48 + "┘\n")
+
+
+# Example Usage in the Loop:
+for auth_entry in auth_data_list:
+    parsed_auth = auth_entry['parsed']
+    raw_auth = auth_entry['raw']
+    username = parsed_auth.get('user', {}).get('username', 'No Username')
+
+    # Determine Proxy
+    proxy = None
+    if use_proxy and proxies:
+        proxy = proxies[proxy_index % len(proxies)]
+
+    # Referral Status
+    response_activity = get_activity(raw_auth, proxy)
+    referral_status = "Applied" if response_activity else "Failed"
+
+    # Metrics
+    rank, earned = get_metrics(raw_auth, proxy)
+
+    # Power Status
+    power_ok, current_power, power_capacity = check_power(raw_auth, proxy)
+    power_status = power_ok and current_power >= 1000
+
+    # Miner Status
+    if power_ok:
+        if current_power >= 1000:
+            success, response = post_request(raw_auth, proxy)
+            miner_status = "Success" if success else f"Failed: {response}"
+        else:
+            miner_status = "Skipping. Power is low"
+    else:
+        miner_status = "Power is low"
+
+    # Display Chamber
+    display_chamber(
+        username=username,
+        referral_status=referral_status,
+        rank=rank,
+        balance=earned,
+        power_status=power_ok,
+        miner_status=miner_status
+    )
+
+    time.sleep(5)
+
+    if use_proxy and len(proxies) > 1:
+        proxy_index += 1
+
+animated_loading(60)
