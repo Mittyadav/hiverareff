@@ -155,12 +155,19 @@ def animated_loading(duration):
     print("\rWaiting for the next claim to be completed.         ", flush=True)
 
 def print_welcome_message():
-    print(Fore.WHITE + r"""
-    -======================≪ ◦ ❈ ◦ ≫======================-
-    |                                                    |
-    |          Welcome to Hivera Miner Bot              |
-    |                                                    |
-    -======================≪ ◦ ❈ ◦ ≫======================-
+    print(Fore.GREEN + r"""
+  -================= ≫ ──── ≪•◦ ❈ ◦•≫ ──── ≪=================-
+ │                                                          │
+ │  ██████╗  █████╗ ██████╗ ██╗  ██╗                        │
+ │  ██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝                        │
+ │  ██║  ██║███████║██████╔╝█████╔╝                         │
+ │  ██║  ██║██╔══██║██╔══██╗██╔═██╗                         │
+ │  ██████╔╝██║  ██║██║  ██║██║  ██╗                        │
+ │  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝                        │
+ │                                                          │
+ │                                                          │
+ ╰─━━━━━━━━━━━━━━━━━━━━━━━━Termux-os━━━━━━━━━━━━━━━━━━━━━━━─╯
+
     """)
     print(Fore.YELLOW + "Join Telegram Channel: https://t.me/scripthub00")
 
