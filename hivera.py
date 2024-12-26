@@ -274,69 +274,79 @@ if __name__ == "__main__":
     while True:
  
 def display_chamber(username, referral_status, rank, balance, power_status, miner_status):
-    """Displays a modernized chamber for the provided details."""
-    border_color = Fore.MAGENTA + Style.BRIGHT
-    text_color = Fore.CYAN
-    success_color = Fore.GREEN
-    warning_color = Fore.YELLOW
-    error_color = Fore.RED
+    """
+    Display a stylish chamber for user details and mining status.
+    """
+    print("\n" + Fore.MAGENTA + Style.BRIGHT + "=" * 50)
+    print(Fore.CYAN + f"               User Mining Chamber")
+    print(Fore.MAGENTA + Style.BRIGHT + "=" * 50)
+    
+    print(Fore.YELLOW + f"[ Username ] : {Fore.GREEN + username}")
+    print(Fore.YELLOW + f"[ Referral ] : {Fore.GREEN + referral_status if referral_status == 'Applied' else Fore.RED + referral_status}")
+    print(Fore.YELLOW + f"[ Rank ]     : {Fore.CYAN + rank}")
+    print(Fore.YELLOW + f"[ Balance ]  : {Fore.CYAN + balance}")
+    
+    power_status_text = f"{current_power}/{power_capacity}" if power_status else "Power is low"
+    power_status_color = Fore.GREEN if power_status else Fore.RED
+    print(Fore.YELLOW + f"[ Power ]    : {power_status_color + power_status_text}")
+    
+    miner_status_color = Fore.GREEN if "Success" in miner_status else Fore.YELLOW if "Skipping" in miner_status else Fore.RED
+    print(Fore.YELLOW + f"[ Miner ]    : {miner_status_color + miner_status}")
+    
+    print(Fore.MAGENTA + "=" * 50 + "\n")
 
-    # Print the styled chamber
-    print(border_color + "┌" + "─" * 48 + "┐")
-    print(border_color + "│" + f"{text_color} Username   : {Fore.WHITE}{username:<36}" + border_color + "│")
-    print(border_color + "│" + f"{text_color} Referral   : {success_color if referral_status == 'Applied' else error_color}{referral_status:<36}" + border_color + "│")
-    print(border_color + "│" + f"{text_color} Rank       : {Fore.BLUE}{rank:<36}" + border_color + "│")
-    print(border_color + "│" + f"{text_color} Balance    : {success_color}{balance:<36}" + border_color + "│")
-    print(border_color + "│" + f"{text_color} Power      : {success_color if power_status else error_color}{'OK' if power_status else 'Low':<36}" + border_color + "│")
-    print(border_color + "│" + f"{text_color} Miner      : {success_color if miner_status == 'Success' else warning_color}{miner_status:<36}" + border_color + "│")
-    print(border_color + "└" + "─" * 48 + "┘\n")
-
-
-# Example Usage in the Loop:
-for auth_entry in auth_data_list:
-    parsed_auth = auth_entry['parsed']
-    raw_auth = auth_entry['raw']
-    username = parsed_auth.get('user', {}).get('username', 'No Username')
-
-    # Determine Proxy
-    proxy = None
-    if use_proxy and proxies:
-        proxy = proxies[proxy_index % len(proxies)]
-
-    # Referral Status
-    response_activity = get_activity(raw_auth, proxy)
-    referral_status = "Applied" if response_activity else "Failed"
-
-    # Metrics
-    rank, earned = get_metrics(raw_auth, proxy)
-
-    # Power Status
-    power_ok, current_power, power_capacity = check_power(raw_auth, proxy)
-    power_status = power_ok and current_power >= 1000
-
-    # Miner Status
-    if power_ok:
-        if current_power >= 1000:
-            success, response = post_request(raw_auth, proxy)
-            miner_status = "Success" if success else f"Failed: {response}"
-        else:
-            miner_status = "Skipping. Power is low"
-    else:
-        miner_status = "Power is low"
-
-    # Display Chamber
-    display_chamber(
-        username=username,
-        referral_status=referral_status,
-        rank=rank,
-        balance=earned,
-        power_status=power_ok,
-        miner_status=miner_status
-    )
-
-    time.sleep(5)
-
-    if use_proxy and len(proxies) > 1:
-        proxy_index += 1
-
-animated_loading(60)
+# Main Loop with Stylish Chamber
+if __name__ == "__main__":
+    if not auth_data_list:
+        print(f"{Fore.RED} Auth data is empty.{Style.RESET_ALL}")
+        sys.exit(1)
+    
+    proxy_index = 0
+    while True:
+        for auth_entry in auth_data_list:
+            parsed_auth = auth_entry['parsed']
+            raw_auth = auth_entry['raw']
+            username = parsed_auth.get('user', {}).get('username', 'No Username')
+            
+            # Determine Proxy
+            proxy = None
+            if use_proxy and proxies:
+                proxy = proxies[proxy_index % len(proxies)]
+            
+            # Referral Status
+            response_activity = get_activity(raw_auth, proxy)
+            referral_status = "Applied" if response_activity else "Failed"
+            
+            # Metrics
+            rank, earned = get_metrics(raw_auth, proxy)
+            
+            # Power Status
+            power_ok, current_power, power_capacity = check_power(raw_auth, proxy)
+            power_status = power_ok and current_power >= 1000
+            
+            # Miner Status
+            if power_ok:
+                if current_power >= 1000:
+                    success, response = post_request(raw_auth, proxy)
+                    miner_status = "Success" if success else f"Failed: {response}"
+                else:
+                    miner_status = "Skipping. Power is low"
+            else:
+                miner_status = "Power is low"
+            
+            # Display Chamber
+            display_chamber(
+                username=username,
+                referral_status=referral_status,
+                rank=rank,
+                balance=earned,
+                power_status=power_ok,
+                miner_status=miner_status
+            )
+            
+            time.sleep(5)
+            
+            if use_proxy and len(proxies) > 1:
+                proxy_index += 1
+        
+        animated_loading(60)
