@@ -270,10 +270,8 @@ if __name__ == "__main__":
     if not auth_data_list:
         print(f"{Fore.RED} Auth data is empty.{Style.RESET_ALL}")
         sys.exit(1)
-    proxy_index = 0
-    while True:
- 
-def display_chamber(username, referral_status, rank, balance, power_status, miner_status):
+    
+ def display_chamber(username, referral_status, rank, balance, power_status, miner_status):
     """
     Display a stylish chamber for user details and mining status.
     """
