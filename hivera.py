@@ -273,10 +273,6 @@ if __name__ == "__main__":
     proxy_index = 0
     while True:
  
-        from colorama import Fore, Style, init
-
-init(autoreset=True)
-
 def display_chamber(username, referral_status, rank, balance, power_status, miner_status):
     """Displays a modernized chamber for the provided details."""
     border_color = Fore.MAGENTA + Style.BRIGHT
